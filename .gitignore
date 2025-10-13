@@ -1,0 +1,24 @@
+# Virtual env
+.venv/
+env/
+venv/
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Pytest / temp
+htmlcov/
+.coverage
+
+# Editor
+.vscode/
+*.swp
+.DS_Store
+
+# OS
+Thumbs.db
+
+errors_summary.txt
