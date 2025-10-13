@@ -24,9 +24,13 @@ class Task:
 
     @classmethod
     def from_dict(cls, data: dict):
-        new_task = cls(title=data["title"], description=data["description"])
-        new_task["id"] = data["id"]
-        new_task["created_at"] = data["created_at"]
-        new_task["completed"] = data["completed"]
+        title = data.get("title", "")
+        description = data.get("description", "")
+        new_task = cls(title=title, description=description)
+        if "id" in data:
+            new_task.id = data["id"]
+        if "created_at" in data:
+            new_task.created_at = data["created_at"]
+        if "completed" in data:
+            new_task.completed = data["completed"]
         return new_task
-    
