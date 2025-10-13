@@ -34,3 +34,17 @@ class Task:
         if "completed" in data:
             new_task.completed = data["completed"]
         return new_task
+
+    def __repr__(self):
+        return (f"Task(id={self.id!r}, title={self.title!r}, description={self.description!r},"
+                f" created_at={self.created_at!r}, completed={self.completed!r}")
+
+    def __eq__(self, other):
+        if not isinstance(other, Task):
+            return NotImplemented
+        return self.id == other.id
+
+    def __lt__(self, other):
+        if not isinstance(other, Task):
+            return NotImplemented
+        return self.created_at < other.created_at
