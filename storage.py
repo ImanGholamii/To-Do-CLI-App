@@ -37,14 +37,14 @@ def load_tasks(path: Path = DEFAULT_TASKS_PATH) -> List[Task]:
     if not path.exists():
         return []
     try:
-        text = path.read_text(encoding="utf-8")
-        data = json.loads(text)
+        text = path.read_text(encoding="utf-8")  # text:str read_text opens and read content
+        data = json.loads(text)  # loads: read str and convert to python obj
         if not isinstance(data, list):
             raise StorageReadError(f"Invalid tasks file format: expected list at top-level, got {type(data)}")
-        tasks = []  # tasks: List[Task] = []
+        tasks: List[Task] = []
         for item in data:
             if not isinstance(item, dict):
-                continue  # skip invalid entries ( not dictionaries)
+                continue  # skip invalid entries (not dictionaries)
             tasks.append(Task.from_dict(item))
         return tasks
 
@@ -74,20 +74,26 @@ def save_tasks(tasks: Iterable[Task], path: Path = DEFAULT_TASKS_PATH) -> None:
         # write to a temporary file in the same directory for atomic replace
         dir_for_tmp = path.parent or Path(".")
         # delete=False because we want to use file name after closing file
-        with tempfile.NamedTemporaryFile("w", dir=str(dir_for_tmp), delete=False, encoding="utf-8") as tmpf:
-            json.dump(data, tmpf, ensure_ascii=False, indent=2)
-            tmp_name = Path(tmpf.name)
-            # replace the target file atomically
-            tmp_name.replace(path)
+        with tempfile.NamedTemporaryFile("w", dir=str(dir_for_tmp), delete=False, encoding="utf-8") as tmp_f:
+            json.dump(data, tmp_f, ensure_ascii=False, indent=2)
+            tmp_name = Path(tmp_f.name)
+        # replace the target file atomically
+        tmp_name.replace(path)
     except Exception as e:
-        # try to clean_up temp file if exists
-        if 'tmp_name' in locals() and tmp_name.exists():
-            tmp_name.unlink()
-        raise StorageWriteError(f"Failed to write tasks to {path}: {e}") from e  # path = Path(path)
+        # try to cleanup temp file if exists
+        try:
+            if 'tmp_name' in locals() and tmp_name.exists():
+                tmp_name.unlink()
+        except Exception:
+            pass
+        raise StorageWriteError(f"Failed to write tasks to {path}: {e}") from e
 
 
 def add_task(task: Task, path: Path = DEFAULT_TASKS_PATH) -> None:
-    pass
+    loaded_tasks = load_tasks(path)
+    loaded_tasks.append(task)
+    save_tasks(loaded_tasks, path)
+
 
 
 def update_task(updated: Task, path: Path = DEFAULT_TASKS_PATH) -> bool:
