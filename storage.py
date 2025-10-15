@@ -125,4 +125,8 @@ def remove_task(task_id: str, path: Path = DEFAULT_TASKS_PATH) -> bool:
 
 
 def find_task(task_id: str, path: Path = DEFAULT_TASKS_PATH) -> Optional[Task]:
-    pass
+    tasks = load_tasks(path)
+    for t in tasks:
+        if t.id == task_id:
+            return t
+    return None
