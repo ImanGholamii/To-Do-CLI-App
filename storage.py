@@ -115,6 +115,13 @@ def remove_task(task_id: str, path: Path = DEFAULT_TASKS_PATH) -> bool:
     """
     Remove task by id. Returns True if removed, False if not found.
     """
+    tasks = load_tasks(path)
+    original_tasks_len = len(tasks)
+    tasks = [t for t in tasks if t.id != task_id]
+    if original_tasks_len != len(tasks):
+        save_tasks(tasks)
+        return True
+    return False
 
 
 def find_task(task_id: str, path: Path = DEFAULT_TASKS_PATH) -> Optional[Task]:
