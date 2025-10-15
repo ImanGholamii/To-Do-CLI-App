@@ -1,4 +1,5 @@
 import json
+import tempfile
 from pathlib import Path
 from typing import List, Iterable, Optional
 
@@ -32,7 +33,7 @@ def load_tasks(path: Path = DEFAULT_TASKS_PATH) -> List[Task]:
     If the file does not exist, returns an empty list.
     Raises StorageReadError if the file exists but cannot be parsed.
     """
-    path = Path(path)
+    path = Path(path)  # converting str to Path
     if not path.exists():
         return []
     try:
@@ -60,7 +61,29 @@ def save_tasks(tasks: Iterable[Task], path: Path = DEFAULT_TASKS_PATH) -> None:
     Write is atomic: data is written to a temporary file then moved into place.
     Raises StorageWriteError on failure.
     """
-    pass
+    path = Path(path)
+
+    # prepare serializable task list
+    data = [task.to_dict() for task in tasks]
+
+    # ensure target directory exists
+    if path.parent and not path.parent.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)  # to save file in a dir doesn't exist
+
+    try:
+        # write to a temporary file in the same directory for atomic replace
+        dir_for_tmp = path.parent or Path(".")
+        # delete=False because we want to use file name after closing file
+        with tempfile.NamedTemporaryFile("w", dir=str(dir_for_tmp), delete=False, encoding="utf-8") as tmpf:
+            json.dump(data, tmpf, ensure_ascii=False, indent=2)
+            tmp_name = Path(tmpf.name)
+            # replace the target file atomically
+            tmp_name.replace(path)
+    except Exception as e:
+        # try to clean_up temp file if exists
+        if 'tmp_name' in locals() and tmp_name.exists():
+            tmp_name.unlink()
+        raise StorageWriteError(f"Failed to write tasks to {path}: {e}") from e  # path = Path(path)
 
 
 def add_task(task: Task, path: Path = DEFAULT_TASKS_PATH) -> None:
