@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import List, Iterable, Optional
 
@@ -31,7 +32,26 @@ def load_tasks(path: Path = DEFAULT_TASKS_PATH) -> List[Task]:
     If the file does not exist, returns an empty list.
     Raises StorageReadError if the file exists but cannot be parsed.
     """
-    pass
+    path = Path(path)
+    if not path.exists():
+        return []
+    try:
+        text = path.read_text(encoding="utf-8")
+        data = json.loads(text)
+        if not isinstance(data, list):
+            raise StorageReadError(f"Invalid tasks file format: expected list at top-level, got {type(data)}")
+        tasks = []  # tasks: List[Task] = []
+        for item in data:
+            if not isinstance(item, dict):
+                continue  # skip invalid entries ( not dictionaries)
+            tasks.append(Task.from_dict(item))
+        return tasks
+
+    except json.JSONDecodeError as e:
+        raise StorageReadError(f"Could not parse JSON file {path}: {e}") from e
+
+    except Exception as e:  # Any other unexpected error reading the file
+        raise StorageReadError(f"Error reading tasks from {path}: {e}") from e
 
 
 def save_tasks(tasks: Iterable[Task], path: Path = DEFAULT_TASKS_PATH) -> None:
