@@ -95,12 +95,20 @@ def add_task(task: Task, path: Path = DEFAULT_TASKS_PATH) -> None:
     save_tasks(loaded_tasks, path)
 
 
-
 def update_task(updated: Task, path: Path = DEFAULT_TASKS_PATH) -> bool:
     """
     Replace a task with the same id as 'updated'. Returns True if updated, False if not found.
     """
-    pass
+    tasks = load_tasks(path)
+    change_flag = False
+    for i, t in enumerate(tasks):
+        if updated.id == t.id:
+            tasks[i] = updated
+            change_flag = True
+            break
+    if change_flag:
+        save_tasks(tasks, path)
+    return change_flag
 
 
 def remove_task(task_id: str, path: Path = DEFAULT_TASKS_PATH) -> bool:
