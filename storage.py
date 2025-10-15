@@ -3,7 +3,7 @@ import tempfile
 from pathlib import Path
 from typing import List, Iterable, Optional
 
-from models import Task
+from .models import Task
 
 
 # Custom Storage Exceptions
@@ -119,7 +119,7 @@ def remove_task(task_id: str, path: Path = DEFAULT_TASKS_PATH) -> bool:
     original_tasks_len = len(tasks)
     tasks = [t for t in tasks if t.id != task_id]
     if original_tasks_len != len(tasks):
-        save_tasks(tasks)
+        save_tasks(tasks, path)
         return True
     return False
 
