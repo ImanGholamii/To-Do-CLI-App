@@ -1,3 +1,4 @@
+import sys
 from functools import wraps
 from time import perf_counter
 from typing import Callable
@@ -5,6 +6,7 @@ from typing import Callable
 
 def timeit_decor(func: Callable) -> Callable:
     """Decorator: print elapsed time when the function finishes."""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         start = perf_counter()
@@ -24,3 +26,15 @@ def confirm(prompt: str = "Are you sure? (y/N): ") -> bool:
     except (EOFError, KeyboardInterrupt):
         return False
     return answer in ("y", "yes")
+
+
+def safe_print(*args, **kwargs) -> None:
+    """small wrapper that avoids broken pipe errors when piping output."""
+    try:
+        print(*args, **kwargs)
+    except BrokenPipeError:
+        # if output is piped and consumer closed early
+        try:
+            sys.stdout.close()
+        finally:
+            raise SystemExit(0)
