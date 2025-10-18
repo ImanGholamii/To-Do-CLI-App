@@ -4,7 +4,7 @@ from time import perf_counter
 from typing import Callable
 
 
-def timeit_decor(func: Callable) -> Callable:
+def timeit_print(func: Callable) -> Callable:
     """Decorator: print elapsed time when the function finishes."""
 
     @wraps(func)
