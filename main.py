@@ -3,8 +3,8 @@ import argparse
 from pathlib import Path
 from typing import List
 
-from models import Task
-from storage import (
+from .models import Task
+from .storage import (
     load_tasks,
     save_tasks,
     add_task,
@@ -12,7 +12,7 @@ from storage import (
     remove_task,
     find_task
 )
-from utils import timeit_print, confirm, safe_print
+from .utils import timeit_print, confirm, safe_print
 
 DEFAULT_PATH = Path("tasks.json")
 
