@@ -69,3 +69,12 @@ def cmd_find(path: Path, task_id: str):
     safe_print("Found:")
     safe_print(task.to_dict())
 
+
+def cmd_export(path: Path, out_file: Path):
+    tasks = load_tasks(path=path)
+    if not tasks:
+        safe_print("No tasks to export.")
+        return
+    # We just save JSON copy
+    save_tasks(tasks, path=out_file)
+    safe_print(f"Exported {len(tasks)} tasks to {out_file}")
