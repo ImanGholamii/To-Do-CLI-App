@@ -60,3 +60,12 @@ def cmd_remove(path: Path, task_id:str):
     else:
         safe_print("Cancelled.")
 
+
+def cmd_find(path: Path, task_id: str):
+    task = find_task(task_id, path)
+    if not task:
+        safe_print("Task not found.")
+        return
+    safe_print("Found:")
+    safe_print(task.to_dict())
+
