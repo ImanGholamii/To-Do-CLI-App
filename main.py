@@ -34,3 +34,13 @@ def cmd_add(path: Path, title: str, description: str = ""):
     task = Task(title, description)
     add_task(task, path)
     safe_print(f"Task added: {task.id} - {task.title}")
+
+
+def cmd_done(path: Path,  task_id: str):
+    task = find_task(task_id, path)
+    if not task:
+        safe_print("Task not found.")
+        return
+    task.mark_as_done()
+    update_task(task, path)
+    safe_print(f"Marked as done: {task.id}")
