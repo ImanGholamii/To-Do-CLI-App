@@ -28,3 +28,9 @@ def cmd_list(path: Path):
     for i, t in enumerate(tasks, start=1):
         status = "[x]" if t.completed else "[ ]"
         safe_print(f"{i:2d}. {status} {t.title} (id: {t.id})")
+
+
+def cmd_add(path: Path, title: str, description: str = ""):
+    task = Task(title, description)
+    add_task(task, path)
+    safe_print(f"Task added: {task.id} - {task.title}")
