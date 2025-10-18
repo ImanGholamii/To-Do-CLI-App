@@ -44,3 +44,19 @@ def cmd_done(path: Path,  task_id: str):
     task.mark_as_done()
     update_task(task, path)
     safe_print(f"Marked as done: {task.id}")
+
+
+def cmd_remove(path: Path, task_id:str):
+    task = find_task(task_id, path)
+    if not task:
+        safe_print("Task not found.")
+        return
+    if confirm(f"Delete task '{task.title}'? (y/N): "):
+        removed = remove_task(task_id, path)
+        if removed:
+            safe_print("Removed.")
+        else:
+            safe_print("Could not remove (not found).")
+    else:
+        safe_print("Cancelled.")
+
