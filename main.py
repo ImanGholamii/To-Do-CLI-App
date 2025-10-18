@@ -5,16 +5,14 @@ from typing import List
 
 from models import Task
 from storage import (
-load_tasks,
-save_tasks,
-add_task,
-update_task,
-remove_task,
-find_task,
-DEFAULT_TASKS_PATH
+    load_tasks,
+    save_tasks,
+    add_task,
+    update_task,
+    remove_task,
+    find_task
 )
 from utils import timeit_print, confirm, safe_print
-
 
 DEFAULT_PATH = Path("tasks.json")
 
@@ -36,7 +34,7 @@ def cmd_add(path: Path, title: str, description: str = ""):
     safe_print(f"Task added: {task.id} - {task.title}")
 
 
-def cmd_done(path: Path,  task_id: str):
+def cmd_done(path: Path, task_id: str):
     task = find_task(task_id, path)
     if not task:
         safe_print("Task not found.")
@@ -46,7 +44,7 @@ def cmd_done(path: Path,  task_id: str):
     safe_print(f"Marked as done: {task.id}")
 
 
-def cmd_remove(path: Path, task_id:str):
+def cmd_remove(path: Path, task_id: str):
     task = find_task(task_id, path)
     if not task:
         safe_print("Task not found.")
@@ -109,6 +107,19 @@ def main(argv: List[str] = None):
 
     path = args.path
 
+    if args.cmd == "list":
+        cmd_list(path)
+    elif args.cmd == "add":
+        cmd_add(path, args.title, args.description)
+    elif args.cmd == "done":
+        cmd_done(path, args.id)
+    elif args.cmd == "remove":
+        cmd_remove(path, args.id)
+    elif args.cmd == "find":
+        cmd_find(path, args.id)
+    elif args.cmd == "export":
+        cmd_export(path, args.out)
 
 
-
+if __name__ == "__main__":
+    main()
