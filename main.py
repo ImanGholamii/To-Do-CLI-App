@@ -78,3 +78,37 @@ def cmd_export(path: Path, out_file: Path):
     # We just save JSON copy
     save_tasks(tasks, path=out_file)
     safe_print(f"Exported {len(tasks)} tasks to {out_file}")
+
+
+@timeit_print
+def main(argv: List[str] = None):
+    parser = argparse.ArgumentParser(prog="todo", description="Simple To-Do CLI")
+    parser.add_argument("--path", "-p", type=Path, default=DEFAULT_PATH, help="Path to tasks JSON file")
+
+    sub = parser.add_subparsers(dest="cmd", required=True)
+
+    sub.add_parser("list", help="List tasks")
+
+    a = sub.add_parser("add", help="Add a new task")
+    a.add_argument("title", help="Task title")
+    a.add_argument("-d", "--description", default="", help="Task description")
+
+    d = sub.add_parser("done", help="Mark a task done")
+    d.add_argument("id", help="Task id")
+
+    r = sub.add_parser("remove", help="Remove a task")
+    r.add_argument("id", help="Task id")
+
+    f = sub.add_parser("find", help="Find a task by id")
+    f.add_argument("id", help="Task id")
+
+    e = sub.add_parser("export", help="Export tasks to a file")
+    e.add_argument("out", type=Path, help="Output file path")
+
+    args = parser.parse_args(argv)
+
+    path = args.path
+
+
+
+
